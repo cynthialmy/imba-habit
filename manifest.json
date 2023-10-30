@@ -1,0 +1,15 @@
+{
+  "entry:src/index.imba?web": {
+    "url": "/assets/index.H4EXZYYG.js",
+    "path": "/Users/cynthiali/Projects/imba-habit/dist/assets/index.H4EXZYYG.js"
+  },
+  "*?css": {
+    "url": "/assets/index.BQRNS6NR.css",
+    "path": "/Users/cynthiali/Projects/imba-habit/dist/assets/index.BQRNS6NR.css"
+  },
+  "/index.html": {},
+  "/assets/index.H4EXZYYG.js": {},
+  "/assets/index.VUZPEDFQ.css": {},
+  "/assets/index.BQRNS6NR.css": {},
+  "main": "index.html"
+}
