@@ -17,7 +17,8 @@ global css
 
 tag dopamine-box
 	prop habits = loadData() || []
-	prop showAdder = true
+	prop showAdder = false
+	prop allDone? = false
 
 	def persist
 		persistData(habits)
@@ -28,6 +29,7 @@ tag dopamine-box
 	def resetAll
 		for habit in habits
 			habit.done = false
+		allDone? = false
 		persist()
 	
 	def handleHabitAdded e # In Imba, UI is rerendered on every handeled event
@@ -44,16 +46,25 @@ tag dopamine-box
 
 	def toggleItem e
 		const idToToggle = e.detail
+		let remaining = 0
 		for habit in habits
 			if habit.id === idToToggle
 				habit.done = !habit.done
+			remaining++ unless habit.done
+		if remaining === 0
+			allDone? = true
+			setTimeout(&, 500) do
+				resetAll()
+				imba.commit()
 		persist()
 	
 	def handleClearData
 		clearData()
 		habits = []
+		allDone? = false
 
 	css .container inset:0px d:vflex jc:center ai:stretch
+		.congrats fs:lg fw:bold color:cooler4 ta:center mt:20px 
 		.panel-area d:vflex ja:center flg:1 mt:0 mb:$panel-space pt:$panel-space
 			.controls mt:20px d:flex g:10px
 				button bgc:transparent td@hover:underline fs:xs color:cooler4 cursor:pointer
@@ -61,8 +72,14 @@ tag dopamine-box
 			&.on h:100%
 			.chooser inset:0 mx:$panel-space ofy:scroll bgc:cooler2 rdt:10px
 
+	def setup
+		if habits.length === 0
+			showAdder = true
+
 	<self>
 		<div.container>
+			if allDone?
+				<div.congrats> "Congrates! You filled your Dopamine Box!!"
 			<div.panel-area>
 				<habit-group 
 					@deleteItem=deleteItem 
