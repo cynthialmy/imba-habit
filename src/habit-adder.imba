@@ -1,21 +1,23 @@
+import {icons} from "./icons"
+
 tag habit-adder
 
-	prop name = ""
-
-	css bgc:cool2 p:10px rd:lg 
-		header fw:500 fs:xs mb:5px mt:-5px c:cool5
-		section form d:flex g:5px
-		button bgc:indigo5 @hover:indigo6 c:white rd:sm px:5px
-		div flex:1
-			input w:100% px:5px rd:sm
-	
-	def handleSubmit
-		emit("habitAdded", name)
-		name = ""
+	css section bgc:white rd:lg
+		$spacing:10px
+		ofx:scroll d:grid gtc:repeat(auto-fit, minmax(50px, 1fr))
+		grid-gap:$spacing p:$spacing
+		button pos:relative rd:10px p:0 bgc:cooler1
+		button@before content:"" pb:100% d:block
+		.icon-view inset:5px d:flex ja:center
+		button@focus outline:0
+		button@hover bgc:cooler3/50
+		button@focus shadow:0 0 0 2px cooler4/25
 
 	<self>
-		<header> "Add Habit"
 		<section>
-			<form @submit.prevent=handleSubmit>
-				<div> <input type="text" bind=name placeholder="Habit Name">
-				<button type="submit"> "Add"
+		# loop thru array: for item in list
+		# loop thru object: for own key, value in object
+			for own name, icon of icons
+				<button @click=emit('habitAdded', name)>
+					<div.icon-view>
+						<svg src=icon.svg>

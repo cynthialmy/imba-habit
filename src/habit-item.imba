@@ -1,3 +1,5 @@
+import {icons} from "./icons"
+
 tag habit-item
 	prop name = "Untitled"
 	prop done = false
@@ -22,7 +24,8 @@ tag habit-item
 				<input type="text" bind=name>
 		else
 			<button.item .done=done bind=done>
-				<div> name
+				# <div> name
+				<svg src=icons[name]..svg>
 		
 		<div.actions>
 			<button.edit bind=editing> if editing then "Done" else "Edit"
