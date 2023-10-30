@@ -1,4 +1,5 @@
 import {nanoid} from 'nanoid'
+import {persistData, loadData, clearData} from './persist'
 import "./habit-group"
 import "./habit-item"
 import "./habit-adder"
@@ -15,8 +16,11 @@ global css
 	body bgc:#F9FAFC
 
 tag dopamine-box
-	prop habits = [{name: "emotions_dizzy", done: true, id: nanoid()}]
+	prop habits = loadData() || []
 	prop showAdder = true
+
+	def persist
+		persistData(habits)
 			
 	def toggleAdder
 		showAdder = !showAdder
@@ -24,16 +28,35 @@ tag dopamine-box
 	def resetAll
 		for habit in habits
 			habit.done = false
+		persist()
 	
 	def handleHabitAdded e # In Imba, UI is rerendered on every handeled event
 		console.log e
 		const newHabit = {name: e.detail, done: false, id: nanoid()}
 		habits.push newHabit
+		persist()
+
+	def deleteItem e
+		const idToDelete = e.detail
+		# filter function returns a new array, where every item that returns true is kept
+		habits = habits.filter do(h) h.id !== idToDelete # Imba's do() is like JS's arrow function
+		persist()
+
+	def toggleItem e
+		const idToToggle = e.detail
+		for habit in habits
+			if habit.id === idToToggle
+				habit.done = !habit.done
+		persist()
+	
+	def handleClearData
+		clearData()
+		habits = []
 
 	css .container inset:0px d:vflex jc:center ai:stretch
 		.panel-area d:vflex ja:center flg:1 mt:0 mb:$panel-space pt:$panel-space
 			.controls mt:20px d:flex g:10px
-				button bgc:transparent td@hover:underline fs:xs color:blue5 cursor:pointer
+				button bgc:transparent td@hover:underline fs:xs color:cooler4 cursor:pointer
 		.chooser-area tween:$default-tween h:0 pos:relative of:hidden
 			&.on h:100%
 			.chooser inset:0 mx:$panel-space ofy:scroll bgc:cooler2 rdt:10px
@@ -41,11 +64,16 @@ tag dopamine-box
 	<self>
 		<div.container>
 			<div.panel-area>
-				<habit-group habits=habits>
+				<habit-group 
+					@deleteItem=deleteItem 
+					@toggleItem=toggleItem
+					habits=habits
+				>
 
 				<div.controls>
 					<button @click=toggleAdder> "Toggle"
 					<button @click=resetAll> "Reset All"
+					<button @click=handleClearData> "Clear Data"
 		
 			<div.chooser-area .on=showAdder>
 				<div.chooser>
