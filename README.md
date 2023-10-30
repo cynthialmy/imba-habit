@@ -31,4 +31,4 @@ The Dopamine Box is a sleek application designed to let users log their daily ac
 
 ## Wrapping Up
 
-Embrace the power of Imba and create powerful, blazing-fast web apps just like Scrimba.com. Dive deep into Dopamine Box, explore its features, and learn by building. Learn more about Imba at [imba.io](https://imba.io/).
+Embrace the power of Imba and create powerful, blazing-fast web apps just like [Scrimba.com](https://scrimba.com/dashboard#overview). Dive deep into Dopamine Box, explore its features, and learn by building. Learn more about Imba at [imba.io](https://imba.io/).
