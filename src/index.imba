@@ -134,9 +134,11 @@ tag dopamine-box
 					&@hover bgc:cooler5
 				button bgc:transparent bd:1px solid cooler4 color:cooler4 rd:md px:20px py:12px cursor:pointer
 					&@hover bgc:cooler1
-		.chooser-area tween:$default-tween h:0 pos:relative of:hidden
-			&.on h:100%
-			.chooser inset:0 mx:$panel-space ofy:scroll bgc:cooler2 rdt:10px
+		.chooser-area tween:$default-tween pos:relative of:hidden
+			max-height:0
+			&.on
+				max-height:1000px
+			.chooser mx:$panel-space ofy:scroll bgc:cooler2 rdt:10px p:12px
 
 	def getCategoryLabel cat
 		const label = categories[cat]?.label || "Unknown"
@@ -156,6 +158,9 @@ tag dopamine-box
 			currentScreen = "category-select"
 		else if currentScreen === "category-select"
 			currentScreen = "logging"
+		if currentScreen === "logging" and !selectedCategory
+			selectedCategory = Object.keys(categories)[0]
+			showAdder = true
 
 	<self>
 		<div.container>
@@ -163,9 +168,9 @@ tag dopamine-box
 				<div.header> "Choose today's focus"
 				<div.description>
 					if moments.length === 0
-						"Pick a category to start logging what makes you feel good today"
+						"Pick a focus area to start logging small wins or feel-good moments."
 					else
-						"Add another category or continue with your current focus"
+						"You can add another focus or continue logging moments for the current one."
 				<div.category-selector>
 					for own key, category of categories
 						<button.category-btn
@@ -184,9 +189,11 @@ tag dopamine-box
 								"Select a category"
 						<div.session-hint>
 							if moments.length > 0
-								moments.length + " moment" + (moments.length !== 1 ? "s" : "") + " logged"
+								moments.length + " moment" + (moments.length !== 1 ? "s" : "") + " logged so far"
 							else
-								"Log your first moment"
+								"Tap an icon to log your first moment. Long-press (or Alt+Click) to delete, click to toggle done."
+					<div.description ta:center color:cool5 fs:xs mx:20px lh:1.5>
+						"Add quick moments below, then end your day to reflect on what mattered most."
 					
 					<habit-group 
 						@deleteItem=deleteItem 
@@ -209,6 +216,8 @@ tag dopamine-box
 			else if currentScreen === "summary" and allDone?
 				<div.summary-section>
 					<div.summary-title> "✨ Today's Dopamine Box"
+					<div.description ta:center color:cool5 fs:sm mx:20px lh:1.5>
+						"Here’s what you captured. Restart to set a new focus or keep logging more moments."
 					
 					let categoryNames = {}
 					for own key, cat of categories
