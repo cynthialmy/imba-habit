@@ -1,12 +1,12 @@
 tag habit-group
 	prop moments = []
-	
+
 	css
 		.group tween:all 200ms ease
 			d:flex g:10px g@xs:30px jc:center fw:wrap
 			&.empty rd:md shadow:0 0 0 2px cooler2 py:30px
 		.empty-state
-			ta:center color:cool5 fs:sm mx:20px lh:1.4
+			ta:center color:cool5 fs:md mx:20px lh:1.4
 
 	def render
 		const empty? = moments.length === 0
@@ -22,4 +22,3 @@ tag habit-group
 							name=moment.name
 							done=moment.done
 						>
-

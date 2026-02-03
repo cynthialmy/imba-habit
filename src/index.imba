@@ -15,7 +15,7 @@ global css
 		$default-speed:350ms
 		$default-ease:ease
 		$default-tween:all $default-speed $default-ease
-	body bgc:#F9FAFC
+	body bgc:#F9FAFC font-family:'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif
 
 tag dopamine-box
 	prop moments = loadData() || []
@@ -27,12 +27,12 @@ tag dopamine-box
 
 	def persist
 		persistData(moments)
-			
+
 	def selectCategory category
 		selectedCategory = category
 		currentScreen = "logging"
 		showAdder = true
-	
+
 	def handleMomentLogged e
 		const newMoment = {name: e.detail, done: false, id: nanoid(), category: selectedCategory}
 		moments.push newMoment
@@ -42,29 +42,31 @@ tag dopamine-box
 		reflectionSelected = e.detail
 
 	def handleReflectionComplete e
-		# Calculate dominant category
+		currentScreen = "summary"
+		allDone? = true
+		reflectionSelected = null
+
+	def getDominantCategory
 		const categoryCounts = {}
 		for moment in moments
 			categoryCounts[moment.category] ||= 0
 			categoryCounts[moment.category] += 1
-		
+
 		let dominantCategory = selectedCategory
 		let maxCount = 0
 		for own category, count of categoryCounts
 			if count > maxCount
 				maxCount = count
 				dominantCategory = category
-		
-		currentScreen = "logging"
-		reflectionSelected = null
-	
+		dominantCategory
+
 	def addCategory
 		currentScreen = "category-select"
-	
+
 	def continueLogging
 		currentScreen = "logging"
 		showAdder = true
-	
+
 	def resetAll
 		moments = []
 		currentScreen = "category-select"
@@ -75,8 +77,11 @@ tag dopamine-box
 		persist()
 
 	def endDay
-		currentScreen = "summary"
-		allDone? = true
+		if moments.length > 0
+			currentScreen = "reflection"
+		else
+			currentScreen = "summary"
+			allDone? = true
 
 	def deleteItem e
 		const idToDelete = e.detail
@@ -89,7 +94,7 @@ tag dopamine-box
 			if moment.id === idToToggle
 				moment.done = !moment.done
 		persist()
-	
+
 	def handleClearData
 		clearData()
 		moments = []
@@ -97,38 +102,38 @@ tag dopamine-box
 		selectedCategory = null
 		allDone? = false
 
-	css .container inset:0px d:vflex jc:center ai:center
-		.header fs:lg fw:bold color:cooler4 ta:center mt:40px mb:10px
-		.description ta:center color:cool5 fs:sm mb:20px mx:20px lh:1.6
+	css .container inset:0px d:vflex jc:center ai:center of:auto py:40px
+		.header fs:xl fw:600 color:cooler4 ta:center mt:40px mb:10px
+		.description ta:center color:cool5 fs:md mb:20px mx:20px lh:1.6
 		.category-selector
 			d:flex fd:column g:15px ai:center mt:20px
 			.category-btn
 				bgc:white bd:2px solid cooler3 rd:lg px:20px py:12px
-				cursor:pointer fs:sm fw:500 color:cooler4 tween:all 200ms ease
+				cursor:pointer fs:md fw:500 color:cooler4 tween:all 200ms ease
 				min-width:200px ta:center w:250px
 				&@hover bgc:cooler1 bd-color:cooler4
 				&.selected bgc:cooler4 c:white bd-color:cooler4
-		.panel-area d:vflex ja:center flg:1 mt:0 mb:$panel-space pt:$panel-space
+		.panel-area d:vflex ja:center mt:0 mb:0 pt:$panel-space
 			.session-header
 				d:flex ai:center jc:center g:10px mb:20px
-				.category-badge bgc:cooler2 rd:md px:15px py:8px fw:500 fs:sm color:cooler4
-				.session-hint fs:xs color:cool5
+				.category-badge bgc:cooler2 rd:md px:15px py:8px fw:500 fs:md color:cooler4
+				.session-hint fs:sm color:cool5
 			.controls mt:20px d:flex g:10px jc:center fw:wrap
-				button bgc:cooler4 c:white rd:md px:12px py:8px fs:xs cursor:pointer
+				button bgc:cooler4 c:white rd:md px:12px py:8px fs:sm cursor:pointer
 					&@hover bgc:cooler5
-				button bgc:transparent bd:1px solid cooler3 color:cooler4 rd:md px:12px py:8px fs:xs cursor:pointer
+				button bgc:transparent bd:1px solid cooler3 color:cooler4 rd:md px:12px py:8px fs:sm cursor:pointer
 					&@hover bgc:cooler1
 		.summary-section
 			d:vflex ai:center g:20px mt:40px px:20px
-			.summary-title fw:bold fs:lg color:cooler4 ta:center
-			.summary-category bgc:cooler2 rd:lg px:30px py:20px fs:md fw:500 color:cooler4 ta:center
+			.summary-title fw:bold fs:xl color:cooler4 ta:center
+			.summary-category bgc:cooler2 rd:lg px:30px py:20px fs:lg fw:500 color:cooler4 ta:center
 			.moments-breakdown
 				bgc:cooler1 rd:lg px:20px py:15px w:100% max-width:400px
-				.breakdown-title fw:500 color:cooler4 mb:10px fs:sm
+				.breakdown-title fw:500 color:cooler4 mb:10px fs:md
 				.breakdown-item d:flex jc:between ai:center mb:8px
-					.category-name color:cool5 fs:sm
-					.count bgc:cooler4 c:white rd:md px:8px py:2px fw:bold fs:xs
-			.summary-subtitle ta:center color:cool5 fs:sm mb:10px
+					.category-name color:cool5 fs:md
+					.count bgc:cooler4 c:white rd:md px:8px py:2px fw:bold fs:sm
+			.summary-subtitle ta:center color:cool5 fs:md mb:10px
 			.button-group d:flex g:10px
 				button bgc:cooler4 c:white rd:md px:20px py:12px cursor:pointer
 					&@hover bgc:cooler5
@@ -137,22 +142,22 @@ tag dopamine-box
 		.chooser-area tween:$default-tween pos:relative of:hidden
 			max-height:0
 			&.on
-				max-height:1000px
-			.chooser mx:$panel-space ofy:scroll bgc:cooler2 rdt:10px p:12px
+				max-height:none
+			.chooser mx:$panel-space bgc:cooler2 rdt:10px p:12px mt:40px mb:40px
 
 	def getCategoryLabel cat
 		const label = categories[cat]?.label || "Unknown"
 		label
-	
+
 	def getCategoryCount cat
 		moments.filter(do |m| m.category === cat).length
-	
+
 	def getDefaultScreen
 		if moments.length === 0
 			"category-select"
 		else
 			"logging"
-	
+
 	def setup
 		if moments.length === 0
 			currentScreen = "category-select"
@@ -165,10 +170,15 @@ tag dopamine-box
 	<self>
 		<div.container>
 			if currentScreen === "category-select"
-				<div.header> "Choose today's focus"
+				<div.header>
+					if moments.length === 0
+						"Dopamine Box"
+					else
+						"Choose today's focus"
 				<div.description>
 					if moments.length === 0
-						"Pick a focus area to start logging small wins or feel-good moments."
+						<div> "A tiny daily space to notice what made you feel good today."
+						<div style="mt:8px fs:sm"> "Log small moments — not habits, not goals. Just things that gave you a lift."
 					else
 						"You can add another focus or continue logging moments for the current one."
 				<div.category-selector>
@@ -178,7 +188,7 @@ tag dopamine-box
 							.selected=(key === selectedCategory)
 						>
 							category.label
-			
+
 			else if currentScreen === "logging"
 				<div.panel-area>
 					<div.session-header>
@@ -188,41 +198,56 @@ tag dopamine-box
 							else
 								"Select a category"
 						<div.session-hint>
-							if moments.length > 0
-								moments.length + " moment" + (moments.length !== 1 ? "s" : "") + " logged so far"
+							if moments.length === 0
+								"What gave you a dopamine boost today? Tap any moment that feels true."
+							else if moments.length === 1
+								"Nice. Small moments count."
+							else if moments.length <= 3
+								"Want to keep going, or reflect on what mattered most?"
 							else
-								"Tap an icon to log your first moment. Long-press (or Alt+Click) to delete, click to toggle done."
-					<div.description ta:center color:cool5 fs:xs mx:20px lh:1.5>
+								moments.length + " moments captured. Ready to reflect?"
+					<div.description style="ta:center color:cool5 fs:sm mx:20px">
 						"Add quick moments below, then end your day to reflect on what mattered most."
-					
-					<habit-group 
-						@deleteItem=deleteItem 
+
+					<habit-group
+						@deleteItem=deleteItem
 						@toggleItem=toggleItem
 						moments=moments
 					>
-					
+
 					<div.controls>
 						<button @click=addCategory> "➕ Add Different Focus"
 						<button @click=endDay> "✨ End Day & Reflect"
 						<button @click=handleClearData> "Clear Data"
-				
+
 				<div.chooser-area .on=showAdder>
 					<div.chooser>
-						<habit-adder 
+						<habit-adder
 							@momentLogged=handleMomentLogged
 							category=selectedCategory
 						>
-			
+
+			else if currentScreen === "reflection"
+				<reflection-prompt
+					moments=moments
+					reflectionSelected=reflectionSelected
+					@reflectionAnswer=handleReflectionAnswer
+					@reflectionComplete=handleReflectionComplete
+				>
+
 			else if currentScreen === "summary" and allDone?
 				<div.summary-section>
-					<div.summary-title> "✨ Today's Dopamine Box"
-					<div.description ta:center color:cool5 fs:sm mx:20px lh:1.5>
-						"Here’s what you captured. Restart to set a new focus or keep logging more moments."
-					
+					<div.summary-title> "That's today's dopamine."
+
 					let categoryNames = {}
 					for own key, cat of categories
 						categoryNames[key] = cat.label
-					
+
+					let dominantCategory = getDominantCategory()
+					if dominantCategory and moments.length > 0
+						<div.summary-category>
+							"Most of your positive moments came from " + getCategoryLabel(dominantCategory) + "."
+
 					<div.moments-breakdown>
 						<div.breakdown-title> "Moments by category"
 						for own key, cat of categories
@@ -231,14 +256,13 @@ tag dopamine-box
 								<div.breakdown-item>
 									<div.category-name> categoryNames[key]
 									<div.count> count
-					
-					<div.summary-category>
+
+					<div.description style="ta:center color:cool5 fs:sm mx:20px mb:20px">
 						"You logged " + moments.length + " moment" + (moments.length !== 1 ? "s" : "") + " today"
-					<div.summary-subtitle> "💡 Small moments compound into big happiness"
-					
+
 					<div.button-group>
 						<button @click=resetAll> "🌅 Start a new day"
-						<button @click=continueLogging> "Add more moments"
+						<div style="ta:center color:cool5 fs:sm mt:8px w:100%"> "(You can come back anytime.)"
 
 
 
