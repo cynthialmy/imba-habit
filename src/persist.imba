@@ -1,4 +1,4 @@
-const localStorageKey = 'dopamine-box-data'
+const localStorageKey = 'dopamine-reflection-data'
 
 export def persistData data
 	localStorage.setItem localStorageKey, JSON.stringify(data)

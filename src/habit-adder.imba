@@ -1,6 +1,8 @@
 import {icons} from "./icons"
+import {getIconsForCategory} from "./icons-categories"
 
 tag habit-adder
+	prop category = null
 
 	css section bgc:white rd:lg
 		$spacing:10px
@@ -15,9 +17,8 @@ tag habit-adder
 
 	<self>
 		<section>
-		# loop thru array: for item in list
-		# loop thru object: for own key, value in object
-			for own name, icon of icons
-				<button @click=emit('habitAdded', name)>
+			const categoryIcons = getIconsForCategory(category)
+			for own name, icon of categoryIcons
+				<button @click=emit('momentLogged', name)>
 					<div.icon-view>
 						<svg src=icon.svg>
